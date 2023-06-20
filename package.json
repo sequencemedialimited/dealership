@@ -1,0 +1,24 @@
+{
+  "name": "dealership",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "lint": "eslint . --ext .mjs,.cjs",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "2.2.0",
+    "yargs-parser": "^21.1.1"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/preset-env": "^7.20.2",
+    "eslint": "^8.32.0",
+    "eslint-config-standard": "^17.1.0"
+  }
+}

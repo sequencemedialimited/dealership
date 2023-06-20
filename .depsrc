@@ -1,0 +1,6 @@
+{
+  "author": "Jonathan Perry <jonathanperry@sequencemedia.net>",
+  "dependencies": {
+    "socket.io": "2.2.0"
+  }
+}

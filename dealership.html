@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>caterham - Lite</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta charset="utf-8" />
+		<style>
+
+	* {
+		margin: 0;
+		padding: 0;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	*::after, *::before {
+		box-sizing: inherit;
+	}
+
+	html,
+	body {
+	    overflow: hidden;
+	}
+
+    body {
+    background: #cc99ff
+    }
+
+    .event-target {
+    margin: 2rem;
+    border: 1px solid #330066;
+    border-radius: .5rem;
+    background: white;
+        filter: drop-shadow(10px 10px 10px #9933ff);
+        width: calc(100vw - 4rem);
+        height: calc(100vh - 4rem);
+    }
+
+		</style>
+	</head><body>
+		<div class="event-target"><!-- event target --></div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="module" src="/assets/dealership.mjs"></script>
+	</body>
+</html>
