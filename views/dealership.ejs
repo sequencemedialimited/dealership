@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>caterham - Lite</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="/assets/dealership.css" />
+	</head><body>
+		<script type="text/json" id="config">
+			{
+				"RemoteHost": "<%= RemoteHost %>"
+			}
+		</script>
+		<script type="importmap">
+			{
+				"imports": {
+					"@sequencemedia/device": "https://esm.sh/@sequencemedia/device"
+				}
+			}
+		</script>
+		<div class="event-target"><!-- event target --></div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script async type="module" src="/assets/dealership.mjs"></script>
+	</body>
+</html>
