@@ -6,7 +6,7 @@ import express from 'express'
 import SocketIO from 'socket.io'
 import {
   isRequestSocketEncrypted
-} from '@sequencemedia/device/express'
+} from '@sequencemedia/express'
 
 const log = debug('renderapp')
 
