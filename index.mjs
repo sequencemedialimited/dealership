@@ -1,7 +1,6 @@
 import debug from 'debug'
 import yargsParser from 'yargs-parser'
 import http from 'node:http'
-import https from 'node:https'
 import express from 'express'
 import SocketIO from 'socket.io'
 import {
@@ -47,10 +46,8 @@ app.get('/api/getbackendconfiguration/:region', ({ params: { region } }, res) =>
 })
 
 const DEFAULT_PORT = 80
-const DEFAULT_SECURE_PORT = 443
 
 const PORT = process.env.PORT || args.get('port') || DEFAULT_PORT
-const SECURE_PORT = process.env.SECURE_PORT || args.get('securePort') || DEFAULT_SECURE_PORT
 
 const DEFAULT_REMOTE_HOST = 'https://localhost'
 
@@ -59,7 +56,6 @@ const REMOTE_HOST = (args.has('remoteHost')) ? args.get('remoteHost') : DEFAULT_
 const io = new SocketIO()
 
 const server = http.Server(app)
-const secureServer = https.Server(app)
 
 function getRemoteHost (req) {
   return (
@@ -71,8 +67,6 @@ function getRemoteHost (req) {
 
 io.attach(server)
 
-io.attach(secureServer)
-
 io.on('connect', (socket) => {
   socket
     .on('orbitSpeed', (message) => {
@@ -82,8 +76,4 @@ io.on('connect', (socket) => {
 
 server.listen(PORT, () => {
   log(PORT)
-})
-
-secureServer.listen(SECURE_PORT, () => {
-  log(SECURE_PORT)
 })
