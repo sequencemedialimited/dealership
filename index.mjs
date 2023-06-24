@@ -20,9 +20,9 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.disable('x-powered-by')
 
-app.get('/', (req, res) => res.redirect(REMOTE_HOST))
+app.get('/', (req, res) => res.redirect(getRemoteHost(req)))
 
-app.get('/dealership', (req, res) => res.render('dealership', { RemoteHost: REMOTE_HOST }))
+app.get('/dealership', (req, res) => res.render('dealership', { RemoteHost: getRemoteHost(req) }))
 
 app.get('/api/addressalias/:hostname/:address/:token', ({ params: { hostname, address, token } }, res) => {
   log(hostname, address, token)
@@ -53,6 +53,20 @@ const REMOTE_HOST = (args.has('remoteHost')) ? args.get('remoteHost') : DEFAULT_
 const io = new SocketIO()
 
 const server = http.Server(app)
+
+function isRequestEncrypted ({ socket: { encrypted = false } }) {
+  return (
+    encrypted
+  )
+}
+
+function getRemoteHost (req) {
+  return (
+    isRequestEncrypted(req)
+      ? REMOTE_HOST.replace('http://', 'https://')
+      : REMOTE_HOST.replace('https://', 'http://')
+  )
+}
 
 io.attach(server)
 
