@@ -102,8 +102,6 @@ window.addEventListener('load', function handleLoad () {
     RemoteHost: REMOTE_HOST
   } = JSON.parse(document.getElementById('config').textContent)
 
-  console.log(REMOTE_HOST)
-
   window.addEventListener('beforeunload', function handleBeforeUnload () {
     socket.disconnect()
   })
