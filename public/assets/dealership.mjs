@@ -31,11 +31,9 @@ window.addEventListener('load', function handleLoad () {
 
     Array.from(document.getElementsByClassName('event-target'))
       .forEach((element) => {
-        element.addEventListener('mousedown', handleMouseDown, false)
+        element.addEventListener('mousedown', handleMouseDown, { capture: true, bubbles: false, passive: true })
 
-        element.addEventListener('mouseup', handleMouseUp, false)
-
-        element.addEventListener('mousemove', handleMouseMove, false)
+        element.addEventListener('mouseup', handleMouseUp, { capture: true, bubbles: false, passive: true })
       })
   }
 
@@ -44,45 +42,79 @@ window.addEventListener('load', function handleLoad () {
 
     Array.from(document.getElementsByClassName('event-target'))
       .forEach((element) => {
-        element.removeEventListener('mousedown', handleMouseDown, false)
+        element.removeEventListener('mousedown', handleMouseDown, { capture: true, bubbles: false, passive: true })
 
-        element.removeEventListener('mouseup', handleMouseUp, false)
-
-        element.removeEventListener('mousemove', handleMouseMove, false)
+        element.removeEventListener('mouseup', handleMouseUp, { capture: true, bubbles: false, passive: true })
       })
   }
 
-  function handleMouseDown ({ clientX, clientY }) {
-    const message = {
-      x: clientX,
-      y: clientY
-    }
+  let X = 0
+  let Y = 0
+  const SCROLL_MULTIPLIER = 15
 
-    socket.emit('mousedown', message)
-
-    if (parent !== window) parent.postMessage({ type: 'mousedown', message }, REMOTE_HOST)
+  function getDelta (e = {}) {
+    return (
+      Reflect.has(e, 'wheelDelta')
+        ? Reflect.get(e, 'wheelDelta')
+        : -e.deltaY
+    )
   }
 
-  function handleMouseUp ({ clientX, clientY }) {
-    const message = {
-      x: clientX,
-      y: clientY
-    }
-
-    socket.emit('mouseup', message)
-
-    if (parent !== window) parent.postMessage({ type: 'mouseup', message }, REMOTE_HOST)
+  function normalize (n = 0) {
+    return Math.max(Math.min(1, n), -1)
   }
 
-  function handleMouseMove ({ clientX, clientY }) {
+  function handleMouseDown ({ offsetX, offsetY }) {
+    X = offsetX
+    Y = offsetY
+
+    Array.from(document.getElementsByClassName('event-target'))
+      .forEach((element) => {
+        element.addEventListener('mousemove', handleMouseMove, { capture: true, bubbles: false, passive: true })
+
+        element.addEventListener('wheel', handleWheel, { capture: true, bubbles: false })
+      })
+  }
+
+  function handleMouseUp () {
+    X = 0
+    Y = 0
+
+    Array.from(document.getElementsByClassName('event-target'))
+      .forEach((element) => {
+        element.removeEventListener('mousemove', handleMouseMove, { capture: true, bubbles: false, passive: true })
+
+        element.removeEventListener('wheel', handleWheel, { capture: true, bubbles: false })
+      })
+  }
+
+  function handleMouseMove ({ offsetX, offsetY }) {
     const message = {
-      x: clientX,
-      y: clientY
+      X: X - offsetX,
+      Y: Y - offsetY,
+      Z: 0
     }
 
-    socket.emit('mousemove', message)
+    socket.emit('orbitSpeed', message)
 
-    if (parent !== window) parent.postMessage({ type: 'mousemove', message }, REMOTE_HOST)
+    if (parent !== window) parent.postMessage({ type: 'orbitSpeed', message }, REMOTE_HOST)
+  }
+
+  function handleWheel (e) {
+    e.preventDefault()
+
+    const delta = normalize(getDelta(e))
+    const Z = -delta * SCROLL_MULTIPLIER * -0.01
+
+    const message = {
+      X: 0,
+      Y: 0,
+      Z: Z * 0.05
+    }
+
+    socket.emit('orbitSpeed', message)
+
+    if (parent !== window) parent.postMessage({ type: 'orbitSpeed', message }, REMOTE_HOST)
   }
 
   const uri = getSocketUri()

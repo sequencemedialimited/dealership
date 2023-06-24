@@ -4,6 +4,9 @@ import http from 'node:http'
 import https from 'node:https'
 import express from 'express'
 import SocketIO from 'socket.io'
+import {
+  isRequestSocketEncrypted
+} from '@sequencemedia/device/express'
 
 const log = debug('renderapp')
 
@@ -21,9 +24,9 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.disable('x-powered-by')
 
-app.get('/', (req, res) => res.redirect(REMOTE_HOST))
+app.get('/', (req, res) => res.redirect(getRemoteHost(req)))
 
-app.get('/dealership', (req, res) => res.render('dealership', { RemoteHost: REMOTE_HOST }))
+app.get('/dealership', (req, res) => res.render('dealership', { RemoteHost: getRemoteHost(req) }))
 
 app.get('/api/addressalias/:hostname/:address/:token', ({ params: { hostname, address, token } }, res) => {
   log(hostname, address, token)
@@ -43,8 +46,11 @@ app.get('/api/getbackendconfiguration/:region', ({ params: { region } }, res) =>
   res.status(200).json({ region })
 })
 
-const PORT = process.env.PORT || args.get('port') || 80
-const SECURE_PORT = process.env.SECURE_PORT || args.get('securePort') || 443
+const DEFAULT_PORT = 80
+const DEFAULT_SECURE_PORT = 443
+
+const PORT = process.env.PORT || args.get('port') || DEFAULT_PORT
+const SECURE_PORT = process.env.SECURE_PORT || args.get('securePort') || DEFAULT_SECURE_PORT
 
 const DEFAULT_REMOTE_HOST = 'https://localhost'
 
@@ -55,20 +61,22 @@ const io = new SocketIO()
 const server = http.Server(app)
 const secureServer = https.Server(app)
 
+function getRemoteHost (req) {
+  return (
+    isRequestSocketEncrypted(req)
+      ? REMOTE_HOST.replace('http://', 'https://')
+      : REMOTE_HOST.replace('https://', 'http://')
+  )
+}
+
 io.attach(server)
 
 io.attach(secureServer)
 
 io.on('connect', (socket) => {
   socket
-    .on('mousedown', (message) => {
-      log('mousedown', message)
-    })
-    .on('mouseup', (message) => {
-      log('mouseup', message)
-    })
-    .on('mousemove', (message) => {
-      log('mousemove', message)
+    .on('orbitSpeed', (message) => {
+      log('Orbit speed:', message)
     })
 })
 
