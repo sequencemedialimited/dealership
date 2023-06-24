@@ -3,6 +3,9 @@ import yargsParser from 'yargs-parser'
 import http from 'node:http'
 import express from 'express'
 import SocketIO from 'socket.io'
+import {
+  isRequestSocketEncrypted
+} from '@sequencemedia/device/express'
 
 const log = debug('renderapp')
 
@@ -54,15 +57,9 @@ const io = new SocketIO()
 
 const server = http.Server(app)
 
-function isRequestEncrypted ({ socket: { encrypted = false } }) {
-  return (
-    encrypted
-  )
-}
-
 function getRemoteHost (req) {
   return (
-    isRequestEncrypted(req)
+    isRequestSocketEncrypted(req)
       ? REMOTE_HOST.replace('http://', 'https://')
       : REMOTE_HOST.replace('https://', 'http://')
   )
@@ -72,14 +69,8 @@ io.attach(server)
 
 io.on('connect', (socket) => {
   socket
-    .on('mousedown', (message) => {
-      log('mousedown', message)
-    })
-    .on('mouseup', (message) => {
-      log('mouseup', message)
-    })
-    .on('mousemove', (message) => {
-      log('mousemove', message)
+    .on('orbitSpeed', (message) => {
+      log('Orbit speed:', message)
     })
 })
 
