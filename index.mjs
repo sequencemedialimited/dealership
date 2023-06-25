@@ -54,7 +54,7 @@ const SECURE_PORT = process.env.SECURE_PORT || args.get('securePort') || DEFAULT
 
 const DEFAULT_REMOTE_HOST = 'https://localhost'
 
-const REMOTE_HOST = (args.has('remoteHost')) ? args.get('remoteHost') : DEFAULT_REMOTE_HOST
+const REMOTE_HOST = (args.has('remoteHost') ? args.get('remoteHost') : DEFAULT_REMOTE_HOST).replace(/(.+)\/$/, '$1')
 
 const io = new SocketIO()
 
@@ -66,7 +66,7 @@ function getRemoteHost (req) {
     isRequestSocketEncrypted(req)
       ? REMOTE_HOST.replace('http://', 'https://')
       : REMOTE_HOST.replace('https://', 'http://')
-  )
+  ).replace(/(.+)\/$/, '$1')
 }
 
 io.attach(server)

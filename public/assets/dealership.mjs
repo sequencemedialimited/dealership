@@ -22,7 +22,7 @@ function getSocketUri () {
       : `${protocol}://${hostname}`
   )
 
-  return new URL(uri)
+  return new URL(uri).toString()
 }
 
 window.addEventListener('load', function handleLoad () {
