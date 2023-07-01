@@ -26,7 +26,7 @@ app.disable('x-powered-by')
 
 app.get('/', (req, res) => res.redirect(getRemoteHost(req)))
 
-app.get('/dealership', (req, res) => res.render('dealership', { RemoteHost: getRemoteHost(req) }))
+app.get('/:region/:alias/dealership', (req, res) => res.render('dealership', { RemoteHost: getRemoteHost(req) }))
 
 app.get('/api/addressalias/:hostname/:address/:token', ({ params: { hostname, address, token } }, res) => {
   log(hostname, address, token)

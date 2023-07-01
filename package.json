@@ -1,15 +1,14 @@
 {
   "name": "dealership",
   "version": "1.0.0",
-  "description": "",
   "main": "./index.mjs",
   "type": "module",
+  "license": "ISC",
   "scripts": {
     "start": "DEBUG=renderapp node .",
     "lint": "eslint . --ext .mjs,.cjs",
     "lint:fix": "npm run lint -- --fix"
   },
-  "license": "ISC",
   "dependencies": {
     "@sequencemedia/express": "^1.0.0",
     "ejs": "^3.1.9",
